@@ -1,5 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using BEComentarios.Models;
+using BEComentarios.Data; //Importacion del ApplicationDbContext
+using Microsoft.EntityFrameworkCore; 
 
 namespace BEComentarios.Controllers
 {
@@ -7,6 +9,7 @@ namespace BEComentarios.Controllers
     [Route("api/[controller]")]
     public class ComentariosController : ControllerBase
     {
+
         // Simulamos una base de datos en memoria
         private static readonly List<Comentario> comentarios = new List<Comentario>()
         {
@@ -14,61 +17,118 @@ namespace BEComentarios.Controllers
             new Comentario { Id = 2, Titulo = "Segundo Comentario", Creador = "Luis", FechaCreacion = DateTime.Now.AddDays(-1), Texto = "Contenido ejemplo" }
         };
 
+        private readonly ApplicationDbContext _context; //Variable Privada 
+        
+        public ComentariosController(ApplicationDbContext context) //Constructor 
+        {
+            _context = context;
+        }
+
         // GET: api/comentarios
         [HttpGet]
-        public ActionResult<IEnumerable<Comentario>> GetComentarios()
+        public async Task<IActionResult> Get()
         {
-            return Ok(comentarios);
+            try
+            {
+                var listComentarios = await _context.Comentarios.ToListAsync();
+                return Ok(listComentarios);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex.Message);
+            }
         }
 
         // GET: api/comentarios/5
         [HttpGet("{id}")]
-        public ActionResult<Comentario> GetComentario(int id)
+        public async Task<IActionResult> Get(int id)
         {
-            var comentario = comentarios.FirstOrDefault(c => c.Id == id);
-            if (comentario == null)
-                return NotFound();
+            try
+            {
+                var comentario = await _context.Comentarios.FindAsync(id);
 
-            return Ok(comentario);
+                if (comentario == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    return Ok(comentario);
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         // POST: api/comentarios
         [HttpPost]
-        public ActionResult<Comentario> CrearComentario([FromBody] Comentario nuevoComentario)
+        public async Task<IActionResult> Post([FromBody] Comentario comentario)
         {
-            nuevoComentario.Id = comentarios.Any() ? comentarios.Max(c => c.Id) + 1 : 1;
-            nuevoComentario.FechaCreacion = DateTime.Now;
-            comentarios.Add(nuevoComentario);
+            try
+            {
+                _context.Add(comentario);
+                await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetComentario), new { id = nuevoComentario.Id }, nuevoComentario);
+                return Ok(comentario);
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
 
         // PUT: api/comentarios/5
         [HttpPut("{id}")]
-        public IActionResult ActualizarComentario(int id, [FromBody] Comentario actualizadoComentario)
+        public async Task<IActionResult> Put(int id, [FromBody] Comentario comentario)
         {
-            var comentario = comentarios.FirstOrDefault(c => c.Id == id);
-            if (comentario == null)
-                return NotFound();
-
-            comentario.Titulo = actualizadoComentario.Titulo;
-            comentario.Creador = actualizadoComentario.Creador;
-            comentario.Texto = actualizadoComentario.Texto;
-            // No actualizamos la fecha de creación
-
-            return NoContent();
+            try
+            {
+                if (id != comentario.Id)
+                {
+                    return BadRequest();
+                }
+                else
+                {
+                    _context.Update(comentario);
+                    await _context.SaveChangesAsync();
+                    return Ok(new { message = "Comentario Actualizado con exito!" });
+                }
+            }
+            catch (Exception ex)
+            {
+                
+                return BadRequest(ex.Message);
+            }
         }
 
         // DELETE: api/comentarios/5
         [HttpDelete("{id}")]
-        public IActionResult BorrarComentario(int id)
+        public async Task<IActionResult> Delete(int id)
         {
-            var comentario = comentarios.FirstOrDefault(c => c.Id == id);
-            if (comentario == null)
-                return NotFound();
+            try
+            {
+                var comentario = await _context.Comentarios.FindAsync(id);
+                if (comentario == null)
+                {
+                    return NotFound();
+                }
+                else
+                {
+                    _context.Comentarios.Remove(comentario);
+                    await _context.SaveChangesAsync();
 
-            comentarios.Remove(comentario);
-            return NoContent();
+                    return Ok(new { message = "Comentario eliminado con exito!" });
+                }
+            }
+            catch (Exception ex)
+            {
+
+                return BadRequest(ex.Message);
+            }
         }
     }
 }
