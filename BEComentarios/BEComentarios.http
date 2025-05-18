@@ -1,4 +1,4 @@
-@BEComentarios_HostAddress = http://localhost:5062
+@BEComentarios_HostAddress = http://localhost:5133
 
 GET {{BEComentarios_HostAddress}}/weatherforecast/
 Accept: application/json
