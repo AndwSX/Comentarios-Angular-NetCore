@@ -1,0 +1,26 @@
+<h3 class="mt-3">Agregar Comentario</h3>
+<form [formGroup]="agregarComentario" (ngSubmit)="agregar()">
+    <div class="mb-3">
+        <label for="titulo" class="form-label">Titulo: </label>
+        <input type="text" class="form-control" id="titulo" formControlName="titulo">
+        <span class="text-danger" *ngIf="agregarComentario.get('titulo')?.invalid && agregarComentario.get('titulo')?.touched">
+            El <strong>Titulo</strong> es requerido.
+        </span>
+    </div>
+    <div class="mb-3">
+        <label for="creador" class="form-label">Creador: </label>
+        <input type="text" class="form-control" id="creador" formControlName="creador">
+        <span class="text-danger" *ngIf="agregarComentario.get('creador')?.invalid && agregarComentario.get('creador')?.touched">
+            El <strong>creador</strong> es requerido.
+        </span>
+    </div>
+    <div class="mb-3">
+        <label for="texto" class="form-label">Texto: </label>
+        <textarea class="form-control" id="texto" rows="8" formControlName="texto"></textarea>
+        <span class="text-danger" *ngIf="agregarComentario.get('texto')?.invalid && agregarComentario.get('texto')?.touched">
+            El <strong>texto</strong> es requerido.
+        </span>
+      </div>
+      <button type="submit" [disabled]="agregarComentario.invalid" class="btn btn-primary float-end">Aceptar</button>
+      <button type="button" routerLink="/" class="btn btn-secondary">Volver</button>
+</form>

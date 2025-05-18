@@ -1,0 +1,43 @@
+########################
+# ASP.NET Core
+########################
+bin/
+obj/
+*.user
+*.suo
+.vs/
+
+# secrets / configuración local
+appsettings.Development.json
+
+########################
+# Entity Framework Core
+########################
+# (mantén las Migraciones; el resto ya está cubierto)
+
+########################
+# Angular / Vite
+########################
+node_modules/
+dist/
+.angular/
+.vite/
+coverage/
+
+########################
+# Logs / temporales
+########################
+*.log
+*.tmp
+*.swp
+*.tmp.*
+*.bak
+
+########################
+# Certificados / env
+########################
+*.pfx
+*.key
+*.cer
+.env
+.env.*
