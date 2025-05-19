@@ -10,13 +10,6 @@ namespace BEComentarios.Controllers
     public class ComentariosController : ControllerBase
     {
 
-        // Simulamos una base de datos en memoria
-        private static readonly List<Comentario> comentarios = new List<Comentario>()
-        {
-            new Comentario { Id = 1, Titulo = "Primer Comentario", Creador = "Ana", FechaCreacion = DateTime.Now.AddDays(-2), Texto = "Hola mundo" },
-            new Comentario { Id = 2, Titulo = "Segundo Comentario", Creador = "Luis", FechaCreacion = DateTime.Now.AddDays(-1), Texto = "Contenido ejemplo" }
-        };
-
         private readonly ApplicationDbContext _context; //Variable Privada 
         
         public ComentariosController(ApplicationDbContext context) //Constructor 
